@@ -1,0 +1,14 @@
+ASE TP6
+Amara Antoine, Caron Mathieu.
+
+Troisième couche logicielle, 1re partie : structure d’un volume
+
+on va formater mais on crée pas de racine,
+on init superbloc_s 
+    magic
+    serie
+    nom
+    premier bloc libre = 1
+on init blocs libre s
+    taille = tailleVolume - 1
+    suivants = 0

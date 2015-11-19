@@ -23,9 +23,9 @@ int create_volume(unsigned int size, unsigned int cylinder, unsigned int sector,
     struct vol_s vol;
     unsigned int vol_cyl, vol_sect, /* Store the cyl and sect when browsing through volumes */
                  target_cyl, target_sect;
-    char generated_name[MBR_NAME_LENGTH];
+    char generated_name[NB_MAX_VOL];
 
-    if (mbr->mbr_nb_vols == MBR_MAX_NB_VOL) {
+    if (mbr.nb_vols == NB_MAX_VOL) {
         fprintf(stderr, "Error: reached maximum number of volumes on the disk.\n");
         return EXIT_FAILURE;
     }
@@ -46,8 +46,8 @@ int create_volume(unsigned int size, unsigned int cylinder, unsigned int sector,
     target_sect = (sector + size) % HDA_MAXSECTOR;
 
     /* Checking that the volume that has to be created will not overlap another one */
-    for (i = 0; i < mbr->mbr_nb_vols; i++) {
-        vol = mbr->mbr_volumes[i];
+    for (i = 0; i < mbr.nb_vols; i++) {
+        vol = mbr.vols[i];
 
         volume_to_sector(i, vol.vol_nb_blocks - 1, &vol_cyl, &vol_sect);
 
@@ -79,10 +79,10 @@ int create_volume(unsigned int size, unsigned int cylinder, unsigned int sector,
           (name == NULL
           ? generated_name
           : name),
-          MBR_NAME_LENGTH);
+          NB_MAX_VOL);
 
-    mbr->mbr_volumes[mbr->mbr_nb_vols] = vol;
-    mbr->mbr_nb_vols++;
+    mbr.vols[mbr.nb_vols] = vol;
+    mbr.nb_vols++;
 
     printf("Volume [%s] créé avec succès.\n", vol.vol_name);
     return EXIT_SUCCESS;
@@ -92,8 +92,8 @@ void display_all_volume_name() {
     int i;
 
     printf("** List of available volumes: **\n");
-    for (i = 0; i < mbr->mbr_nb_vols; ++i) {
-        printf("[%d][%s]\n", i, mbr->mbr_volumes[i].vol_name);
+    for (i = 0; i < mbr.nb_vols; ++i) {
+        printf("[%d][%s]\n", i, mbr.vols[i].vol_name);
     }
 }
 
@@ -156,9 +156,6 @@ int main(int argc, char const *argv[]) {
     return res;
 }
 
-    Status API Training Shop Blog About Pricing 
-
-    © 2015 GitHub, Inc. Terms Privacy Security Contact Help 
 
 
 

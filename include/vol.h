@@ -37,6 +37,8 @@ struct mbr_s {
 
 
 extern struct mbr_s mbr;
+extern struct superbloc_s sb;
+extern unsigned int volume_courant;
 
 extern void read_mbr();
 extern void init_mbr();

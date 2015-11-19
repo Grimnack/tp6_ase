@@ -13,9 +13,9 @@ LIBS    = -L$(LIBDIR) -lhardware -lpthread
 ###------------------------------
 ### Main targets
 ###------------------------------------------------------------
-BINARIES= dmps frmt mkvol
+BINARIES= dmps frmt mkvol dvol
 OBJECTS	= $(addsuffix .o,\
-	  dmps frmt mkvol)
+	  dmps frmt mkvol dvol)
 
 all: $(BINARIES) $(OBJECTS)
 
@@ -26,7 +26,7 @@ all: $(BINARIES) $(OBJECTS)
 drive.o: $(LIBDIR)/drive.c
 	$(CC) $(CFLAGS) -c $(LIBDIR)/drive.c $(INCDIR)
 
-vol.o: $(LIBDIR)/vol.c
+vol.o: $(LIBDIR)/vol.c drive.o
 	$(CC) $(CFLAGS) -c $(LIBDIR)/vol.c $(INCDIR)
 
 dmps.o: dmps.c
@@ -46,6 +46,12 @@ mkvol.o: mkvol.c
 
 mkvol: mkvol.o drive.o vol.o
 		$(CC) $(CFLAGS) -o mkvol $^ $(LIBS)
+
+dvol.o: dvol.c
+		$(CC) $(CFLAGS) -c dvol.c $(INCDIR)
+
+dvol: dvol.o vol.o drive.o
+		$(CC) $(CFLAGS) -o dvol $^ $(LIBS)
 
 ###------------------------------
 ### Misc.

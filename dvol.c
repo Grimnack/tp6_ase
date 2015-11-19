@@ -19,7 +19,7 @@ void print_vol(unsigned int volume, unsigned int nbloc) {
 
     unsigned char *buff=malloc(256); 
 
-    read_bloc(volume,nbloc,buff);
+    read_block(volume,nbloc,buff);
 
     for(i=0;i<16;i++) {
         printf("%03x: ",i*16);
@@ -34,12 +34,16 @@ void print_vol(unsigned int volume, unsigned int nbloc) {
 Dans notre programme on imprime la 
 */
 int main(int argc, char **argv){
+    unsigned int volume ;
+    unsigned int nbloc ;
     if (argc < 3) {
         printf("dvol usage: ./dvol [num vol] [nbloc]\n");
-        exit(); /*Petit scarabé*/
+        exit(EXIT_FAILURE); 
     }
-    init_driver();
-    load_mbr(); // Bah oui sinon tu as pas l'air malin avec tes int
+    volume = atoi(argv[1]);
+    nbloc =  atoi(argv[2]);
+    init_hardware("./etc/hardware.ini");
+    init_mbr(); 
     print_vol(volume,nbloc);
-    return 0; //pas 1 pas 2, 0 !!
+    return 0; 
 }

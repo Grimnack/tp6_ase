@@ -101,7 +101,7 @@ sauvegarde la variable globale superbloc dans le disque dur
 */
 void save_super(){
   unsigned char buff[HDA_SECTORSIZE];
-  buff = (unsigned char *) sb; 
+  memcpy(&sb, buff, sizeof(struct superbloc_s)); 
   write_block(volume_courant,0,buff);
 
 }
@@ -111,14 +111,14 @@ initialiser le superbloc au début du volume donné,
 et initialiser les blocs libres qui suivent derriere.
 */
 void init_super(unsigned int vol){
-  load_super(vol) ; // comme ça on obtient la bonne variable globale sb
+  load_super(vol) ; 
   sb.magic = 0xB16B00B5 ;
-  if(mbr.vols[vol].taille == 1)
+  if(mbr.vols[vol].nb_blocks == 1)
     sb.premiers_blocs_libres = 0 ;
   else
     sb.premiers_blocs_libres = 1 ;
   sb.numero_serie = num_serie++ ;
-  sb.nom = "nimp lol" ;
+  strncpy(sb.nom, "Bob", 32);  
   sb.racine = 1 ;
 }
 
@@ -130,19 +130,19 @@ retourne le bloc qui a été alloué
 Si plus de bloc libre on renvoie 0
 */
 unsigned int new_bloc(){
-  struct blocs_libre_s bl ;
+  struct blocs_libres_s bl ;
   unsigned char buff[HDA_SECTORSIZE]; 
   unsigned int alloue = sb.premiers_blocs_libres;
   if (sb.premiers_blocs_libres == 0) 
     return 0;
   read_block(volume_courant,alloue,buff) ;
-  bl = (struct blocs_libre_s *) buff ;
+  bl = *((struct blocs_libres_s *) buff) ;
   if(bl.taille > 1) {
     bl.taille -= 1 ;
-    if(volume_courant.taille > alloue + 1)
-      sb.premiers_blocs_libres += 1 ;
-    else
-      sb.premiers_blocs_libres = 0; 
+    sb.premiers_blocs_libres += 1 ;
+    *((struct blocs_libres_s *) buff) = bl ;
+    write_block(volume_courant,sb.premiers_blocs_libres,buff);
+    
   }
   return alloue ;
 }
